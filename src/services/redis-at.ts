@@ -73,8 +73,6 @@ export const useRedisAuthState = async (baseKey: string, token: string): Promise
       }
     },
     saveCreds: async () => {
-      // console.log('GUARDANDO CREDENCIALES EN REDIS======>', creds, token)
-      // arrowLogs(`GUARDANDO CREDENCIALES EN REDIS ${creds} ${token}`)
       return await writeData(creds, token)
     }
   }

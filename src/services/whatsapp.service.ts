@@ -20,10 +20,11 @@ export default class WhatsAppConnection {
 
   sessionName: string
   res: any
-  // sessions = new Map<string, any>()
 
   async start (res?) {
     const { state, saveCreds } = await useRedisAuthState('auth_info_baileys', this.sessionName)
+
+    // const { state, saveCreds } = await useMultiFileAuthState(`./sessions/${this.sessionName}`)
     const sock = makeWASocket({ printQRInTerminal: false, auth: state, connectTimeoutMs: 30 * 1000 })
 
     let connectionIsOpen = false
@@ -31,22 +32,21 @@ export default class WhatsAppConnection {
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', (update) => {
       const { connection, qr } = update
+
       if (qr) {
         if (this.res && !this.res.headersSent) {
-          return this.res.json({ success: false, message: 'unauthorized', qr })
+          return this.res.json({ isAuth: false, success: false, message: 'unauthorized', qr })
         }
       }
 
       if (connection === 'open') {
+        console.log('OPEN CONNECTION==========', connection)
         sessions.set(this.sessionName, sock)
         connectionIsOpen = true
-
-        sock.ev.on('messages.upsert', (resp) => {
-          console.log('TRATANDO DE CONSULTAR LOS CHATS==========>')
-          console.log(JSON.stringify(resp, undefined, 2))
-        })
       }
+
       if (connection === 'close') {
+        console.log('CLOSE CONNECTION==========', connection)
         this.handleConnectionClose(update)
       }
     })
@@ -59,7 +59,6 @@ export default class WhatsAppConnection {
   }
 
   async getSessionUser (): Promise<any> {
-    // return await readDataConnection(this.sessionName)
     try {
       if (sessions.has(this.sessionName)) {
         return sessions.get(this.sessionName)
@@ -76,16 +75,22 @@ export default class WhatsAppConnection {
     return sock
   }
 
-  handleConnectionClose (update: Partial<ConnectionState>) {
-    const { lastDisconnect, qr } = update
-    const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+  async handleConnectionClose (update: Partial<ConnectionState>) {
+    try {
+      const { lastDisconnect, qr } = update
+      // console.log('LAST DISCONNECT===========', lastDisconnect)
+      const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
 
-    if (shouldReconnect) {
-      this.start()
-    } else {
-      sessions.delete(this.sessionName)
-      removeDataConnection(this.sessionName)
-      this.res.status(500).json({ error: 'Session closed', message: 'this session is already closed, auth again with the QR code', qr })
+      // console.log('SHOULD RECONNECT===========', shouldReconnect)
+      if (shouldReconnect) {
+        await this.start()
+      } else {
+        sessions.delete(this.sessionName)
+        removeDataConnection(this.sessionName)
+        this.res.status(500).json({ error: 'Session closed', message: 'this session is already closed, auth again with the QR code', qr })
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 }

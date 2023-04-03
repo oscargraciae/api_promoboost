@@ -30,7 +30,11 @@ export class AccountController {
     Account.findAll().then((organization: any) => {
       organization.forEach((element: any) => {
         if (element.schemakey !== '' || element.schemakey !== null) {
-          new AccountService(element.schemakey).migrations()
+          new AccountService(element.schemakey).migrations().then((result: any) => {
+            console.log('result', result)
+          }).catch((error: any) => {
+            console.log('error', error)
+          })
         }
       })
       res.json({ success: true })

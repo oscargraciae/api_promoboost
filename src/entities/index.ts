@@ -4,14 +4,17 @@ import { Sequelize } from 'sequelize'
 // import { GlobalUser } from './global_user.model'
 // import { Organization } from './organization.model'
 import { Account } from './account.entity'
+import { CampaignContact } from './campaign-contact'
+import { Campaign } from './campaign.entity'
 import { ContactList } from './contact-list.entity'
 import { Contact } from './contact.entity'
+import { Device } from './device.entity'
 import { List } from './list.entity'
 import { Message } from './message.entity'
 import { User } from './user.entity'
 
-const sequelize = new Sequelize('promoboost_dev', 'postgres', 'desarrollo', {
-  host: 'localhost',
+const sequelize = new Sequelize('promoboost_dev', 'evaa', 'survey2022001$', {
+  host: 'evaadb.postgres.database.azure.com',
   port: 5432,
   dialect: 'postgres',
   define: {
@@ -21,10 +24,12 @@ const sequelize = new Sequelize('promoboost_dev', 'postgres', 'desarrollo', {
     connectTimeout: 900000
   },
   pool: {
-    max: 20,
+    max: 5,
     min: 0,
-    acquire: 1000000
+    idle: 1000 * 10, // 30 seconds
+    acquire: 1000 * 30 // 10 seconds
   }
+  // logging: false
 })
 
 sequelize.authenticate()
@@ -38,11 +43,16 @@ Message.start(sequelize)
 Contact.start(sequelize)
 List.start(sequelize)
 ContactList.start(sequelize)
+Device.start(sequelize)
+Campaign.start(sequelize)
+CampaignContact.start(sequelize)
 
 // Associations
 Account.associate()
 User.associate()
 Message.associate()
 ContactList.associate()
+Device.associate()
+CampaignContact.associate()
 
 export default sequelize

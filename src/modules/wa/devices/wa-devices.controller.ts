@@ -5,36 +5,16 @@ import WhatsAppConnection from '../../../services/whatsapp.service'
 export class WADevicesController {
   static async create (req: Request, res: Response, next: NextFunction) {
     try {
-      const { device } = req.body
+      const { schemakey }: any = req?.user
 
-      // const wa = new WhatsAppConnection('testuno2018', device, res)
-      const wa = new WhatsAppConnection('token', res)
+      const wa = new WhatsAppConnection(schemakey, res)
       let session = await wa.getSessionUser()
 
       if (session === null) {
         session = await wa.createSession()
       }
 
-      res.json({ device, message: 'session conected', session })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  static async sendMessage (req: Request, res: Response, next: NextFunction) {
-    try {
-      const { device, message } = req.body
-
-      const wa = new WhatsAppConnection('token', res)
-      let session = await wa.getSessionUser()
-
-      if (session === null) {
-        session = await wa.createSession()
-      }
-
-      session.sendMessage('15550246501@c.us', { text: message })
-
-      res.json({ device, message, session })
+      res.json({ message: 'session conected', session })
     } catch (error) {
       next(error)
     }
@@ -42,16 +22,37 @@ export class WADevicesController {
 
   static async isAuth (req: Request, res: Response, next: NextFunction) {
     try {
-      const { device } = req.body
+      const { schemakey }: any = req?.user
+      console.log('schemakey', schemakey)
+      const wa = new WhatsAppConnection(schemakey, res)
+      let session = await wa.getSessionUser()
 
-      const wa = new WhatsAppConnection('token', res)
+      console.log('session', session)
+      if (session === null) {
+        session = await wa.createSession()
+        console.log('session 2 ==========', session)
+        if (session === null) {
+          return res.json({ isAuth: false, message: 'session disconected', session })
+        }
+      }
+
+      return res.json({ isAuth: true, message: 'session conected', session })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async getAuthSession (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { schemakey }: any = req?.user
+      const wa = new WhatsAppConnection(schemakey, res)
       const session = await wa.getSessionUser()
 
       if (session === null) {
-        return res.json({ isAuth: false, device, message: 'session disconected', session })
+        return res.json({ isAuth: false, message: 'session disconected', session })
       }
 
-      return res.json({ isAuth: true, device, message: 'session conected', session })
+      return res.json({ isAuth: true, message: 'session conected', session })
     } catch (error) {
       next(error)
     }

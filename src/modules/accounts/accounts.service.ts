@@ -9,11 +9,18 @@ import { Message } from '../../entities/message.entity'
 import { Contact } from '../../entities/contact.entity'
 import { List } from '../../entities/list.entity'
 import { ContactList } from '../../entities/contact-list.entity'
+import { Campaign } from '../../entities/campaign.entity'
+import { CampaignContact } from '../../entities/campaign-contact'
+import { Test } from '../../entities/test.entity'
 
 class AccountService {
-  private readonly schemakey?: string
+  private schemakey?: string
 
   constructor (schemakey?: string) {
+    this.schemakey = schemakey
+  }
+
+  setSchemakey (schemakey: string) {
     this.schemakey = schemakey
   }
 
@@ -30,6 +37,7 @@ class AccountService {
     const user = await new UserService().create({ ...data, accountId: account.id })
 
     const schemakey = `schema_${account.id}`
+    this.setSchemakey(schemakey)
 
     await this.createSchema(schemakey)
 
@@ -38,21 +46,38 @@ class AccountService {
     return new AuthService().createTokens({ id: user.id, firstName: user.firstName, email: user.email, schemakey, accountId: account.id })
   }
 
-  migrations () {
-    if (this.schemakey !== undefined) {
-      void Message.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
-      void Contact.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
-      void List.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
-      void ContactList.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+  async migrations () {
+    try {
+      if (this.schemakey !== undefined) {
+        await Contact.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await List.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await Message.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await ContactList.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await Campaign.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await CampaignContact.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
 
-      ContactList.associate()
+        ContactList.associate()
+        CampaignContact.associate()
+      }
+    } catch (error) {
+      console.log('error migrations========>', error)
     }
   }
 
-  async createSchema (schemakey: string) {
-    if (schemakey !== undefined) {
-      await sequelize.createSchema(schemakey, {})
-      await sequelize.sync({ schema: schemakey }) // NO FORZAR / NOT FORCE
+  async createSchema (newSchemakey: string) {
+    try {
+      console.log('createSchema========>', newSchemakey)
+      await sequelize.createSchema(newSchemakey, {})
+      // await sequelize.sync({ schema: newSchemakey }) // NO FORZAR / NOT FORCE
+      this.migrations()
+        .then(() => {
+          console.log('migration========>', newSchemakey)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } catch (error) {
+      console.log(error)
     }
   }
 

@@ -60,7 +60,7 @@ export class ContactList extends Model<IContact> implements IContact {
         name: 'contactId',
         field: 'contact_id'
       },
-      as: 'contactLists'
+      as: 'listContacts'
     })
 
     List.hasMany(this, {

@@ -2,19 +2,27 @@ import { Model, DataTypes, Sequelize } from 'sequelize'
 
 export const TABLE_NAME = 'campaigns'
 
-export interface IContact {
+export interface ICampaign {
   id?: number
-  firstName?: string
-  lastName?: string
-  phone?: string
+  name?: string
+  description?: string
+  message?: string
+  messageType?: string
+  messageImage?: string
+  messageVideo?: string
+  whatsappAccount?: string
   isActive?: boolean
 }
 
-export class Contact extends Model<IContact> implements IContact {
+export class Campaign extends Model<ICampaign> implements ICampaign {
   declare id: number
-  declare firstName: string
-  declare lastName: string
-  declare phone: string
+  declare name: string
+  declare description: string
+  declare message: string
+  declare messageType: string
+  declare messageImage: string
+  declare messageVideo: string
+  declare whatsappAccount: string
   declare isActive: boolean
 
   static start (sequelize: Sequelize) {
@@ -24,6 +32,34 @@ export class Contact extends Model<IContact> implements IContact {
         field: 'id',
         primaryKey: true,
         autoIncrement: true
+      },
+      name: {
+        type: DataTypes.STRING,
+        field: 'name'
+      },
+      description: {
+        type: DataTypes.STRING,
+        field: 'description'
+      },
+      message: {
+        type: DataTypes.STRING,
+        field: 'message'
+      },
+      messageType: {
+        type: DataTypes.STRING,
+        field: 'message_type'
+      },
+      messageImage: {
+        type: DataTypes.STRING,
+        field: 'message_image'
+      },
+      messageVideo: {
+        type: DataTypes.STRING,
+        field: 'message_video'
+      },
+      whatsappAccount: {
+        type: DataTypes.STRING,
+        field: 'whatsapp_account'
       },
       isActive: {
         type: DataTypes.BOOLEAN,

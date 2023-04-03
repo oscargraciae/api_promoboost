@@ -55,7 +55,7 @@ export class ContactService {
           include: [
             {
               model: ContactList.schema(this.schemakey),
-              as: 'contactLists',
+              as: 'listContacts',
               include: [
                 {
                   model: List.schema(this.schemakey),
@@ -80,7 +80,7 @@ export class ContactService {
           {
             model: ContactList.schema(this.schemakey),
             where: { listId },
-            as: 'contactLists',
+            as: 'listContacts',
             include: [
               {
                 model: List.schema(this.schemakey),
