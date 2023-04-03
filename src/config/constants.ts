@@ -1,8 +1,6 @@
 // export const isDev = process.env.NODE_ENV === 'development';
 export const isProd = process.env.NODE_ENV === 'production'
-// export const STRIPE_TOKEN = process.env.STRIPE_TOKEN || 'pk_test_51IIfHnLDh9k7BA0krnxxx7vxCQIuBWV8HG6iS1IyuDEURijRXVcUHbd0D6kYQJkeecmptfY80DOG5mLBgE6oXcQ000Gkrouoys';
-// export const STRIPE_TOKEN = process.env.STRIPE_TOKEN || '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';
-export const STRIPE_TOKEN: string = process.env.STRIPE_TOKEN! // || 'sk_test_51IIfHnLDh9k7BA0kvLLQFFXL2yaOj6PFtKerOTTPcTFL14uvD6sAalnDa3JZR9AxV3SZsxJgMhZ0EBsjI1ElL3bC00K7JbntmX';
+export const STRIPE_TOKEN: string = process.env.STRIPE_TOKEN!
 
 export const SENDGRID_TOKEN: string = process.env.SENDGRID_TOKEN!
 
