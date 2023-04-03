@@ -21,7 +21,7 @@ if (global.redis !== undefined) {
 app.use(logErrors)
 app.use(errorHandler)
 
-const port = 9001
+const port = 4001
 
 app.listen(port, () => { console.log(`Server listen on port: ${port}`) })
 
