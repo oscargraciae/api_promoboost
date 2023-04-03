@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 node dist/index.js",
+    "build": "tsc",
     "dev": "cross-env NODE_ENV=test nodemon -r dotenv-flow/config src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
