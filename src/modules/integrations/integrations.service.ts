@@ -12,7 +12,8 @@ const credentials = JSON.parse(readFileSync('credentials.json', 'utf8'))
 const oauth2Client = new OAuth2Client(
   credentials.web.client_id,
   credentials.web.client_secret,
-  'http://localhost:5173/settings/integrations'
+  'https://web-promoboost.azurewebsites.net/settings/integrations'
+  // 'http://localhost:5173/settings/integrations'
 )
 
 export class IntegrationService {
