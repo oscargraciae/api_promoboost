@@ -11,6 +11,7 @@ import { Contact } from './contact.entity'
 import { Device } from './device.entity'
 import { List } from './list.entity'
 import { Message } from './message.entity'
+import { Templates } from './templates.entity'
 import { User } from './user.entity'
 
 const sequelize = new Sequelize('promoboost_dev', 'evaa', 'survey2022001$', {
@@ -29,7 +30,7 @@ const sequelize = new Sequelize('promoboost_dev', 'evaa', 'survey2022001$', {
     idle: 1000 * 10, // 30 seconds
     acquire: 1000 * 30 // 10 seconds
   }
-  // logging: false
+  // logging: true
 })
 
 sequelize.authenticate()
@@ -46,6 +47,7 @@ ContactList.start(sequelize)
 Device.start(sequelize)
 Campaign.start(sequelize)
 CampaignContact.start(sequelize)
+Templates.start(sequelize)
 
 // Associations
 Account.associate()
@@ -54,5 +56,7 @@ Message.associate()
 ContactList.associate()
 Device.associate()
 CampaignContact.associate()
+Campaign.associate()
+Templates.associate()
 
 export default sequelize

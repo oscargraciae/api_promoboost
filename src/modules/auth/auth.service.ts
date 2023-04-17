@@ -1,11 +1,10 @@
 import { verify } from 'argon2'
 import jwt from 'jsonwebtoken'
+import { SECRET_KEY } from '../../config/constants'
 import { errorTypes } from '../../config/error-types'
 
 import { Account } from '../../entities/account.entity'
 import { User } from '../../entities/user.entity'
-
-export const SECRET_KEY = 'secretpass_promoboost'
 
 export class AuthService {
   async auth ({ email, password }: { email: string, password: string }) {

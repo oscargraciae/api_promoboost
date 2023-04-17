@@ -11,7 +11,7 @@ import { List } from '../../entities/list.entity'
 import { ContactList } from '../../entities/contact-list.entity'
 import { Campaign } from '../../entities/campaign.entity'
 import { CampaignContact } from '../../entities/campaign-contact'
-import { Test } from '../../entities/test.entity'
+import { Templates } from '../../entities/templates.entity'
 
 class AccountService {
   private schemakey?: string
@@ -52,12 +52,15 @@ class AccountService {
         await Contact.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
         await List.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
         await Message.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
+        await Templates.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
         await ContactList.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
         await Campaign.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
         await CampaignContact.schema(this.schemakey).sync({ schema: this.schemakey, alter: true })
 
         ContactList.associate()
         CampaignContact.associate()
+        Campaign.associate()
+        Templates.associate()
       }
     } catch (error) {
       console.log('error migrations========>', error)

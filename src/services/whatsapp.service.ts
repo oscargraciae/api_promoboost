@@ -22,40 +22,45 @@ export default class WhatsAppConnection {
   res: any
 
   async start (res?) {
-    const { state, saveCreds } = await useRedisAuthState('auth_info_baileys', this.sessionName)
+    try {
+      const { state, saveCreds } = await useRedisAuthState('auth_info_baileys', this.sessionName)
 
-    // const { state, saveCreds } = await useMultiFileAuthState(`./sessions/${this.sessionName}`)
-    const sock = makeWASocket({ printQRInTerminal: false, auth: state, connectTimeoutMs: 30 * 1000 })
+      // const { state, saveCreds } = await useMultiFileAuthState(`./sessions/${this.sessionName}`)
+      const sock = makeWASocket({ printQRInTerminal: false, auth: state, connectTimeoutMs: 30 * 1000 })
 
-    let connectionIsOpen = false
+      let connectionIsOpen = false
 
-    sock.ev.on('creds.update', saveCreds)
-    sock.ev.on('connection.update', (update) => {
-      const { connection, qr } = update
+      sock.ev.on('creds.update', saveCreds)
+      sock.ev.on('connection.update', (update) => {
+        const { connection, qr } = update
 
-      if (qr) {
-        if (this.res && !this.res.headersSent) {
-          return this.res.json({ isAuth: false, success: false, message: 'unauthorized', qr })
+        if (qr) {
+          if (this.res && !this.res.headersSent) {
+            return this.res.json({ isAuth: false, success: false, message: 'unauthorized', qr })
+          }
         }
+
+        if (connection === 'open') {
+          console.log('OPEN CONNECTION==========', connection)
+          sessions.set(this.sessionName, sock)
+          connectionIsOpen = true
+        }
+
+        if (connection === 'close') {
+          console.log('CLOSE CONNECTION==========', connection)
+          this.handleConnectionClose(update)
+        }
+      })
+
+      while (!connectionIsOpen) {
+        await delay(1000)
       }
 
-      if (connection === 'open') {
-        console.log('OPEN CONNECTION==========', connection)
-        sessions.set(this.sessionName, sock)
-        connectionIsOpen = true
-      }
-
-      if (connection === 'close') {
-        console.log('CLOSE CONNECTION==========', connection)
-        this.handleConnectionClose(update)
-      }
-    })
-
-    while (!connectionIsOpen) {
-      await delay(1000)
+      return sock
+    } catch (error) {
+      console.error('ERROR STARTING CONNECTION==========', error.message)
+      return null
     }
-
-    return sock
   }
 
   async getSessionUser (): Promise<any> {

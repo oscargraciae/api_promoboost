@@ -32,10 +32,6 @@ export class IntegrationService {
 
   async saveGoogleToken (code: string): Promise<any> {
     const { tokens } = await oauth2Client.getToken(code)
-    console.log('========TOKENS========')
-    console.log(tokens)
-    console.log('========TOKENS========')
-
     oauth2Client.setCredentials(tokens)
 
     return await Account.update({ googleToken: JSON.stringify(tokens) }, { where: { schemakey: this.schemakey } })

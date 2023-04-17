@@ -9,6 +9,7 @@ import contactsRouter from '../modules/contacts/contacts.routes'
 import campaignsRouter from '../modules/campaigns/campaigns.routes'
 import listsRouter from '../modules/lists/lists.routes'
 import integrationsRouter from '../modules/integrations/integrations.routes'
+import templatesRouter from '../modules/templates/templates.routes'
 
 const Routes = (app: Express) => {
   app.use('/api/v1/auth', authRouter)
@@ -28,6 +29,8 @@ const Routes = (app: Express) => {
   app.use('/api/v1/wa/devices', waDevicesRouter)
 
   app.use('/api/v1/integrations', integrationsRouter)
+
+  app.use('/api/v1/templates', templatesRouter)
 }
 
 export default Routes

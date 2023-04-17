@@ -1,8 +1,8 @@
 import passport from 'passport'
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
+import { SECRET_KEY } from '../../config/constants'
 
 import { User } from '../../entities/user.entity'
-import { SECRET_KEY } from './auth.service'
 
 const jwtOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),

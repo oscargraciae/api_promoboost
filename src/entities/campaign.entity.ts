@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize'
+import { Templates } from './templates.entity'
 
 export const TABLE_NAME = 'campaigns'
 
@@ -12,6 +13,7 @@ export interface ICampaign {
   messageVideo?: string
   whatsappAccount?: string
   isActive?: boolean
+  templateId?: number
 }
 
 export class Campaign extends Model<ICampaign> implements ICampaign {
@@ -24,6 +26,8 @@ export class Campaign extends Model<ICampaign> implements ICampaign {
   declare messageVideo: string
   declare whatsappAccount: string
   declare isActive: boolean
+
+  declare templateId: number
 
   static start (sequelize: Sequelize) {
     this.init({
@@ -42,7 +46,7 @@ export class Campaign extends Model<ICampaign> implements ICampaign {
         field: 'description'
       },
       message: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         field: 'message'
       },
       messageType: {
@@ -65,11 +69,39 @@ export class Campaign extends Model<ICampaign> implements ICampaign {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
         field: 'is_active'
+      },
+      templateId: {
+        type: DataTypes.INTEGER,
+        field: 'template_id'
       }
     }, {
       sequelize,
       tableName: TABLE_NAME,
       timestamps: true
+    })
+  }
+
+  static associate () {
+    this.belongsTo(Templates, {
+      foreignKey: {
+        name: 'templateId',
+        field: 'template_id'
+      }
+    })
+
+    this.belongsTo(Campaign, {
+      foreignKey: {
+        name: 'campaignId',
+        field: 'campaign_id'
+      }
+    })
+
+    Templates.hasMany(this, {
+      foreignKey: {
+        name: 'templateId',
+        field: 'template_id'
+      },
+      as: 'campaignContacts'
     })
   }
 }

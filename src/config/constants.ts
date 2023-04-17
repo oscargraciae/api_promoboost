@@ -20,3 +20,5 @@ export const TRIAL_DAYS: number = isProd ? 14 : 4
 
 export const SURVEY_STATUS_ACTIVE = 1
 export const SURVEY_STATUS_DESACTIVE = 2
+
+export const SECRET_KEY = 'secretpass_promoboost'
