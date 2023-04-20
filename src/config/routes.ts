@@ -3,7 +3,7 @@ import { Express } from 'express'
 import authRouter from '../modules/auth/auth.routes'
 import userRouter from '../modules/user/user.routes'
 import accountRouter from '../modules/accounts/accounts.routes'
-import messagesRouter from '../modules/messages/messages.routes'
+import messagesRouter from '../modules/public_api/messages/messages.routes'
 import waDevicesRouter from '../modules/wa/devices/wa-devices.routes'
 import contactsRouter from '../modules/contacts/contacts.routes'
 import campaignsRouter from '../modules/campaigns/campaigns.routes'
@@ -24,13 +24,16 @@ const Routes = (app: Express) => {
 
   app.use('/api/v1/campaigns', campaignsRouter)
 
-  app.use('/api/v1/messages', messagesRouter)
-
   app.use('/api/v1/wa/devices', waDevicesRouter)
 
   app.use('/api/v1/integrations', integrationsRouter)
 
   app.use('/api/v1/templates', templatesRouter)
+
+  // Public API
+  app.use('/api/v1/messages', messagesRouter)
+
+  app.use('/v1/contacts', messagesRouter)
 }
 
 export default Routes

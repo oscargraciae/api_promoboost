@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import WhatsAppConnection from '../../services/whatsapp.service'
+import WhatsAppConnection from '../../../services/whatsapp.service'
 import { CreateMessageDto } from './dto/create-message.dto'
 
 export class MessageService {

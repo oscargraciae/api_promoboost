@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import { Message } from '../../entities/message.entity'
+import { Message } from '../../../entities/message.entity'
 
-import { SECRET_KEY } from '../../config/constants'
-import { Templates } from '../../entities/templates.entity'
-import WhatsAppConnection from '../../services/whatsapp.service'
+import { SECRET_KEY } from '../../../config/constants'
+import { Templates } from '../../../entities/templates.entity'
+import WhatsAppConnection from '../../../services/whatsapp.service'
 
 export class MessageController {
   static async create (req: Request, res: Response, next: NextFunction) {

@@ -19,8 +19,9 @@ export class ContactService {
     const { lists } = newContactDTO
     const contactCreated = await Contact.schema(this.schemakey).create(newContactDTO)
 
+    console.log('lists======>', lists)
     if (lists.length > 0) {
-      const contactLists = lists.map((list: any) => ({ listId: list.id, contactId: contactCreated.id }))
+      const contactLists = lists.map((listId: number) => ({ listId, contactId: contactCreated.id }))
       await ContactList.schema(this.schemakey).bulkCreate(contactLists)
     }
 

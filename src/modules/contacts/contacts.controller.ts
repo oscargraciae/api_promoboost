@@ -21,8 +21,6 @@ export class ContactController {
 
     const resp = await new ContactService(schemakey).getAll({ listId, page, name })
 
-    // await createRandomContacts(schemakey, 10)
-
     res.json(resp)
   }
 

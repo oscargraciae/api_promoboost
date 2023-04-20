@@ -2,13 +2,13 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/quotes */
 import { Response } from 'express'
-import makeWASocket, { ConnectionState, delay, DisconnectReason } from "@adiwajshing/baileys"
+import makeWASocket, { ConnectionState, delay, DisconnectReason, WASocket } from "@adiwajshing/baileys"
 import { Boom } from '@hapi/boom'
 
-import { removeDataConnection } from "./redis.service"
+// import { removeDataConnection } from "./redis.service"
 // import { readDataConnection, writeDataConnection } from "./redis_redis"
 
-import { useRedisAuthState } from "./redis-at"
+import { useRedisAuthState, removeSession } from "./redis-at"
 
 const sessions = new Map<string, any>()
 
@@ -48,7 +48,7 @@ export default class WhatsAppConnection {
 
         if (connection === 'close') {
           console.log('CLOSE CONNECTION==========', connection)
-          this.handleConnectionClose(update)
+          this.handleConnectionClose(update, sock)
         }
       })
 
@@ -80,7 +80,7 @@ export default class WhatsAppConnection {
     return sock
   }
 
-  async handleConnectionClose (update: Partial<ConnectionState>) {
+  async handleConnectionClose (update: Partial<ConnectionState>, socket: WASocket) {
     try {
       const { lastDisconnect, qr } = update
       // console.log('LAST DISCONNECT===========', lastDisconnect)
@@ -91,7 +91,10 @@ export default class WhatsAppConnection {
         await this.start()
       } else {
         sessions.delete(this.sessionName)
-        removeDataConnection(this.sessionName)
+        // removeDataConnection(this.sessionName)
+        console.log('REMOVING SESSION==========', this.sessionName)
+        removeSession(this.sessionName)
+        // await socket.logout()
         this.res.status(500).json({ error: 'Session closed', message: 'this session is already closed, auth again with the QR code', qr })
       }
     } catch (error) {
