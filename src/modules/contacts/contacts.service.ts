@@ -145,7 +145,8 @@ export class ContactService {
   }
 
   async deleteContact (contactId: number) {
-    await Contact.schema(this.schemakey).update({ isActive: false }, { where: { id: contactId } })
+    // await Contact.schema(this.schemakey).update({ isActive: false }, { where: { id: contactId } })
+    await Contact.schema(this.schemakey).destroy({ where: { id: contactId } })
 
     return { message: 'Contacto eliminado' }
   }
