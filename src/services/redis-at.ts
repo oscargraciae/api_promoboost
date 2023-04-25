@@ -14,6 +14,7 @@ export const useRedisAuthState = async (baseKey: string, token: string): Promise
 
   const readData = async (key: string) => {
     try {
+      console.log('KEY EN REDIS READ', key)
       const _key = join(baseKey, token, fixKeyName(key)!)
       // arrowLogs(`KEY EN REDIS READ ${_key}`)
       const data = await redis.get(_key)
@@ -63,7 +64,6 @@ export const useRedisAuthState = async (baseKey: string, token: string): Promise
           for (const category in data) {
             for (const id in data[category]) {
               const value = data[category][id]
-              console.log('value=========>', value)
               const key = `${category}-${id}`
               tasks.push(value ? writeData(value, key) : removeData(key))
             }
@@ -80,10 +80,8 @@ export const useRedisAuthState = async (baseKey: string, token: string): Promise
 }
 
 export const removeSession = async (sessionName: string) => {
-  // const fixKeyName = (key?: string) => key?.replace(/\//g, '__')?.replace(/:/g, '-')
-
   const redis = global.redis
-  const _key = join('auth_info_baileys', sessionName)
+  const _key = join('auth_info_baileys', sessionName, sessionName)
   // await redis.del(join(baseKey, token, fixKeyName(key)!))
   await redis.del(_key)
 }

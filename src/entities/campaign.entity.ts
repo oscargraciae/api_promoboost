@@ -101,7 +101,7 @@ export class Campaign extends Model<ICampaign> implements ICampaign {
         name: 'templateId',
         field: 'template_id'
       },
-      as: 'campaignContacts'
+      as: 'campaignTemplates'
     })
   }
 }

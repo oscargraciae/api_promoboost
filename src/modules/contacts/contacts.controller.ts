@@ -24,6 +24,41 @@ export class ContactController {
     res.json(resp)
   }
 
+  static async getById (req: Request, res: Response, next: NextFunction) {
+    const { schemakey }: any = req?.user
+    const { id }: any = req.params
+
+    const resp = await new ContactService(schemakey).getContactById(id)
+
+    res.json(resp)
+  }
+
+  static async update (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { schemakey }: any = req?.user
+      const { id }: any = req.params
+
+      await new ContactService(schemakey).updateContact(id, { ...req.body })
+
+      res.json({ message: 'ok' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async delete (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { schemakey }: any = req?.user
+      const { id }: any = req.params
+
+      await new ContactService(schemakey).deleteContact(id)
+
+      res.json({ message: 'ok' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
   static async getTotalContacts (req: Request, res: Response, next: NextFunction) {
     const { schemakey }: any = req?.user
 

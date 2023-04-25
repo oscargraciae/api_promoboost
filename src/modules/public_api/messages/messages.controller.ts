@@ -57,4 +57,17 @@ export class MessageController {
       next(error)
     }
   }
+
+  static async getAll (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { schemakey }: any = req?.user
+      const { page }: { page?: number } = req.query
+
+      const resp = await Message.schema(schemakey).findAll({ limit: 10, offset: page ? (page - 1) * 10 : 0 })
+
+      res.json(resp)
+    } catch (error) {
+      next(error)
+    }
+  }
 }

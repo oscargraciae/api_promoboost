@@ -68,6 +68,14 @@ export class CampaignContact extends Model<ICampaignContact> implements ICampaig
       }
     })
 
+    Campaign.hasMany(this, {
+      foreignKey: {
+        name: 'campaignId',
+        field: 'campaign_id'
+      },
+      as: 'campaignContacts'
+    })
+
     Contact.hasMany(this, {
       foreignKey: {
         name: 'contactId',

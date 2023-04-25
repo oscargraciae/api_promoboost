@@ -17,7 +17,18 @@ export class ContactService {
 
   async create (newContactDTO: CreateContactDto) {
     const { lists } = newContactDTO
-    const contactCreated = await Contact.schema(this.schemakey).create(newContactDTO)
+
+    let phoneToSend = newContactDTO.phone
+
+    if (phoneToSend.slice(0, 3) === '+52') {
+      phoneToSend = phoneToSend.replace('+52', '+521')
+    }
+
+    if (phoneToSend[0] === '+') {
+      phoneToSend = phoneToSend.replace('+', '')
+    }
+
+    const contactCreated = await Contact.schema(this.schemakey).create({ ...newContactDTO, phone: phoneToSend })
 
     console.log('lists======>', lists)
     if (lists.length > 0) {
@@ -97,6 +108,46 @@ export class ContactService {
         ]
       })
     }
+  }
+
+  async getContactById (contactId: number) {
+    return await Contact.schema(this.schemakey).findOne({
+      where: { id: contactId },
+      include: [
+        {
+          model: ContactList.schema(this.schemakey),
+          as: 'listContacts',
+          include: [
+            {
+              model: List.schema(this.schemakey),
+              as: 'list'
+            }
+          ]
+        }
+      ]
+    })
+  }
+
+  async updateContact (contactId: number, updateContactDTO: CreateContactDto) {
+    let phoneToSend = updateContactDTO.phone
+
+    if (phoneToSend.slice(0, 3) === '+52') {
+      phoneToSend = phoneToSend.replace('+52', '+521')
+    }
+
+    if (phoneToSend[0] === '+') {
+      phoneToSend = phoneToSend.replace('+', '')
+    }
+
+    await Contact.schema(this.schemakey).update({ ...updateContactDTO, phone: phoneToSend }, { where: { id: contactId } })
+
+    return { message: 'Contacto actualizado' }
+  }
+
+  async deleteContact (contactId: number) {
+    await Contact.schema(this.schemakey).update({ isActive: false }, { where: { id: contactId } })
+
+    return { message: 'Contacto eliminado' }
   }
 
   async getTotalContacts () {

@@ -89,6 +89,7 @@ export default class WhatsAppConnection {
       // console.log('SHOULD RECONNECT===========', shouldReconnect)
       if (shouldReconnect) {
         await this.start()
+        console.log('RECONNECTING SESSION==========', this.sessionName)
       } else {
         sessions.delete(this.sessionName)
         // removeDataConnection(this.sessionName)

@@ -10,6 +10,9 @@ import campaignsRouter from '../modules/campaigns/campaigns.routes'
 import listsRouter from '../modules/lists/lists.routes'
 import integrationsRouter from '../modules/integrations/integrations.routes'
 import templatesRouter from '../modules/templates/templates.routes'
+import reportsRouter from '../modules/reports/reports.routes'
+
+import publicContactsRouter from '../modules/public_api/contacts/contacts.routes'
 
 const Routes = (app: Express) => {
   app.use('/api/v1/auth', authRouter)
@@ -30,10 +33,12 @@ const Routes = (app: Express) => {
 
   app.use('/api/v1/templates', templatesRouter)
 
+  app.use('/api/v1/reports', reportsRouter)
+
   // Public API
   app.use('/api/v1/messages', messagesRouter)
 
-  app.use('/v1/contacts', messagesRouter)
+  app.use('/v1/contacts', publicContactsRouter)
 }
 
 export default Routes

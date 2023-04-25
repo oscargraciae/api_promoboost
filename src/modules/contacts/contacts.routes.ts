@@ -9,7 +9,13 @@ router.post('/', authJwt, ContactController.create)
 
 router.get('/', authJwt, ContactController.getAll)
 
-router.get('/total', authJwt, ContactController.getTotalContacts)
+router.get('/:id', authJwt, ContactController.getById)
+
+router.put('/:id', authJwt, ContactController.update)
+
+router.delete('/:id', authJwt, ContactController.delete)
+
+router.get('/report/total', authJwt, ContactController.getTotalContacts)
 
 router.post('/import-wa', authJwt, ContactController.importWaContacts)
 

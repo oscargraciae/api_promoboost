@@ -1,3 +1,4 @@
+import { CampaignContact } from '../../entities/campaign-contact'
 import { Campaign } from '../../entities/campaign.entity'
 import { CreateCampaignDto } from './dto/create-campaign.dto'
 
@@ -13,6 +14,16 @@ export class CampaignService {
   }
 
   async getAll () {
-    return await Campaign.schema(this.schemakey).findAll()
+    return await Campaign.schema(this.schemakey).findAll({
+      include: [
+        {
+          model: CampaignContact.schema(this.schemakey),
+          as: 'campaignContacts'
+        }
+      ],
+      order: [
+        ['id', 'DESC']
+      ]
+    })
   }
 }
