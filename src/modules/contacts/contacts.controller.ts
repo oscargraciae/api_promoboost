@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
+import * as XLSX from 'xlsx/xlsx'
+
 import WhatsAppConnection from '../../services/whatsapp.service'
 import { ContactService } from './contacts.service'
+import { FileRequest } from '../../types/FileRequest'
 
 export class ContactController {
   static async create (req: Request, res: Response, next: NextFunction) {
@@ -79,5 +82,20 @@ export class ContactController {
     }
 
     res.json({ message: 'ok' })
+  }
+
+  static async importCsvContacts (req: any, res: Response, next: NextFunction) {
+    try {
+      // const { schemakey }: any = req?.user
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' })
+      const sheet = workbook.Sheets[workbook.SheetNames[0]]
+      console.log('sheet', sheet)
+      const data = XLSX.utils.sheet_to_json(sheet)
+
+      res.json(data)
+    } catch (error) {
+      console.log('error', error)
+      next(error)
+    }
   }
 }

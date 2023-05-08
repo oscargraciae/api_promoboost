@@ -1,9 +1,11 @@
 import { Router } from 'express'
+import multer from 'multer'
 import { authJwt } from '../auth/auth-jwt.service'
 
 import { ContactController } from './contacts.controller'
 
 const router = Router()
+const upload = multer({})
 
 router.post('/', authJwt, ContactController.create)
 
@@ -18,5 +20,7 @@ router.delete('/:id', authJwt, ContactController.delete)
 router.get('/report/total', authJwt, ContactController.getTotalContacts)
 
 router.post('/import-wa', authJwt, ContactController.importWaContacts)
+
+router.post('/import-csv', upload.single('file'), ContactController.importCsvContacts)
 
 export default router
