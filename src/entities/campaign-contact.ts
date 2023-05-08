@@ -8,6 +8,7 @@ export interface ICampaignContact {
   id?: number
   deliveryDate?: Date
   deliveryStatus?: string
+  deliveryError?: string
 
   contactId?: number
   campaignId?: number
@@ -17,6 +18,7 @@ export class CampaignContact extends Model<ICampaignContact> implements ICampaig
   declare id: number
   declare deliveryDate: Date
   declare deliveryStatus: string
+  declare deliveryError: string
 
   declare contactId: number
   declare campaignId: number
@@ -37,7 +39,10 @@ export class CampaignContact extends Model<ICampaignContact> implements ICampaig
         type: DataTypes.STRING,
         field: 'delivery_status'
       },
-
+      deliveryError: {
+        type: DataTypes.STRING,
+        field: 'delivery_error'
+      },
       contactId: {
         type: DataTypes.INTEGER,
         field: 'contact_id'

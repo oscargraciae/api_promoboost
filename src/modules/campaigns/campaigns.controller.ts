@@ -1,15 +1,18 @@
 import { Request, Response, NextFunction } from 'express'
-import { CampaignContact } from '../../entities/campaign-contact'
+import { replaceTextByVariables } from '../../utils/messages_format'
+import { Contact } from '../../entities/contact.entity'
 import WhatsAppConnection from '../../services/whatsapp.service'
 import { CampaignService } from './campaigns.service'
 
 export class CampaignsController {
   static async create (req: Request, res: Response, next: NextFunction) {
     try {
-      const { contacts, message, name }: any = req.body
+      const { contactIds, message, name }: { contactIds: number[], message: string, name: string } = req.body
       const { schemakey }: any = req?.user
 
-      const campaign = await new CampaignService(schemakey).create({ name, message })
+      const campaignService = new CampaignService(schemakey)
+
+      const campaign = await campaignService.create({ name, message })
 
       const wa = new WhatsAppConnection(schemakey, res)
       let session = await wa.getSessionUser()
@@ -18,36 +21,24 @@ export class CampaignsController {
         session = await wa.createSession()
       }
 
-      if (contacts.length > 0) {
-        contacts.forEach((contact: { firstName: string, phone: string, id: number }) => {
-          session.sendMessage(`${contact?.phone}@c.us`, { text: `${message as string}` }).then((result: any) => {
-            console.log('Result: ', result)
-            CampaignContact.schema(schemakey).create({
-              deliveryDate: new Date(),
-              deliveryStatus: 'sent',
-              contactId: contact.id,
-              campaignId: campaign.id
-            }).then((campaignContact: any) => {
-              console.log('Campaign Contact: ', campaignContact)
-            }).catch((error: any) => {
-              console.error('Error when creating campaign contact: ', error)
-            })
-          }).catch((error: any) => {
-            CampaignContact.schema(schemakey).create({
-              deliveryDate: new Date(),
-              deliveryStatus: 'error',
-              contactId: contact.id,
-              campaignId: campaign.id
-            }).then((campaignContact: any) => {
-              console.log('Campaign Contact: ', campaignContact)
-            }).catch((error: any) => {
-              console.error('Error when creating campaign contact: ', error)
-            })
-            console.error('Error when sending: ', error)
-          })
+      const contactsSelected = await Contact.schema(schemakey).findAll({
+        where: {
+          isActive: true,
+          id: contactIds.length === 0 ? { $ne: null } : contactIds
+        }
+      })
+
+      contactsSelected.forEach((contact: { firstName: string, lastName: string, phone: string, id: number }) => {
+        const formatedMessage = replaceTextByVariables(message, { firstName: contact.firstName, lastName: contact?.lastName })
+
+        session.sendMessage(`${contact?.phone}@c.us`, { text: `${formatedMessage}` }).then((_result: any) => {
+          campaignService.createCampaignContact({ campaignId: campaign.id, contactId: contact.id, status: 'success' })
+        }).catch((_error: any) => {
+          campaignService.createCampaignContact({ campaignId: campaign.id, contactId: contact.id, status: 'error', deliveryError: _error.message })
         })
-      }
-      res.json({ message, contacts })
+      })
+
+      res.json({ message })
     } catch (error) {
       next(error)
     }
