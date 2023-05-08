@@ -63,7 +63,7 @@ export class MessageController {
       const { schemakey }: any = req?.user
       const { page }: { page?: number } = req.query
 
-      const resp = await Message.schema(schemakey).findAll({ limit: 10, offset: page ? (page - 1) * 10 : 0 })
+      const resp = await Message.schema(schemakey).findAll({ limit: 10, offset: page ? (page - 1) * 10 : 0, order: [['createdAt', 'DESC']] })
 
       res.json(resp)
     } catch (error) {

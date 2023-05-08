@@ -61,7 +61,7 @@ export class IntegrationService {
     }
 
     contacts.forEach((contact: any) => {
-      if (contact.phone == null && contact.name == null) return
+      if (contact.phone == null || contact.firstName == null || contact.phone === '') return
 
       const { phone, firstName, lastName } = contact
 
@@ -82,6 +82,7 @@ function processContacts (response: any) {
   const contacts = response.data.connections
 
   const processedContacts = contacts.map((contact: any) => {
+    console.log('contact-------->', contact)
     let firstName = ''
     let lastName = ''
     let phone = ''
@@ -93,11 +94,17 @@ function processContacts (response: any) {
     }
 
     // Obtiene el primer número de teléfono disponible, si existe
-    if (contact.phoneNumbers !== null && contact.phoneNumbers.length > 0) {
+    if (contact.phoneNumbers !== null && contact.phoneNumbers.length > 0 && contact.phoneNumbers[0].canonicalForm !== null && contact.phoneNumbers[0].canonicalForm !== undefined && contact.phoneNumbers[0].canonicalForm !== '') {
       phone = contact.phoneNumbers[0].canonicalForm
-      console.log('phone', phone)
+      if (phone?.slice(0, 3) === '+52') {
+        phone = phone.replace('+52', '+521')
+      }
+
+      if (phone[0] === '+') {
+        phone = phone.replace('+', '')
+      }
+
       phone = phone?.replace(/[^a-zA-Z0-9]/g, '')
-      console.log('phone', phone)
     }
 
     return { firstName, lastName, phone }
